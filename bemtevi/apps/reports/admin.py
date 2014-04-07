@@ -1,3 +1,4 @@
 from django.contrib import admin
+from bemtevi.apps.reports.models import TestimonyEntry
 
-# Register your models here.
+admin.site.register(TestimonyEntry)

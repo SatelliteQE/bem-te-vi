@@ -8,3 +8,6 @@ class TestimonyEntry(models.Model):
     manual_testcases = models.PositiveIntegerField()
     automated_testcases = models.PositiveIntegerField()
     no_docstring_testcases = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ['date']

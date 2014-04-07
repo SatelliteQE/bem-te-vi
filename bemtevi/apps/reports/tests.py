@@ -5,6 +5,16 @@ from django.test import TestCase
 from bemtevi.apps.reports.models import TestimonyEntry
 
 
+class TestimonyReportTestCase(TestCase):
+    def test_report_data(self):
+        response = self.client.get(reverse('testimony_report'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertIn('api', response.context)
+        self.assertIn('cli', response.context)
+        self.assertIn('ui', response.context)
+
+
 class TestimonyEntryTestCase(TestCase):
     def test_get_testimony_entry_404(self):
         """Returns 404 when GET on the testimony entry URL"""

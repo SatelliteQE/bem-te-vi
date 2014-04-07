@@ -1,8 +1,28 @@
 import json
 
+from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, Http404
-from django.views.generic import View
+from django.views.generic import View, RedirectView, TemplateView
+
 from bemtevi.apps.reports.models import TestimonyEntry
+
+
+class IndexView(RedirectView):
+    url = reverse_lazy('testimony_report')
+
+
+class TestimonyReportView(TemplateView):
+    template_name = 'reports/testimony.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TestimonyReportView, self).get_context_data(**kwargs)
+        context['api'] = TestimonyEntry.objects.filter(
+            path__endswith='api')[:7]
+        context['cli'] = TestimonyEntry.objects.filter(
+            path__endswith='cli')[:7]
+        context['ui'] = TestimonyEntry.objects.filter(
+            path__endswith='ui')[:7]
+        return context
 
 
 class TestimonyEntryView(View):
@@ -11,7 +31,7 @@ class TestimonyEntryView(View):
 
     def post(self, request, *args, **kwargs):
         data = request.POST.get('testimony_data', None)
-        if not data is None:
+        if data is not None:
             data = json.loads(data)
             for summary in data:
                 entry = TestimonyEntry()

@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Testimony report</h1>
+</div>
+
+<div id="api-chart" class="well well-sm"></div>
+<div id="cli-chart" class="well well-sm"></div>
+<div id="ui-chart" class="well well-sm"></div>
+{% endblock %}
+
+{% block extrajs %}
+<script src="{{ STATIC_URL }}js/highcharts.js"></script>
+<script>
+    $(function () {
+        $('#api-chart').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'API'
+            },
+            xAxis: {
+                categories: [{% for entry in api %}'{{ entry.date }}',{% endfor %}]
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Testcases'
+                },
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                }
+            },
+            legend: {
+                align: 'right',
+                x: -70,
+                verticalAlign: 'top',
+                y: 20,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: false
+            },
+            tooltip: {
+                formatter: function() {
+                    return '<b>'+ this.x +'</b><br/>'+
+                        this.series.name +': '+ this.y +'<br/>'+
+                        'Total: '+ this.point.stackTotal;
+                }
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                        style: {
+                            textShadow: '0 0 3px black, 0 0 3px black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Automated',
+                data: [{% for entry in api %}{{ entry.automated_testcases }},{% endfor %}]
+            }, {
+                name: 'Manual',
+                data: [{% for entry in api %}{{ entry.manual_testcases }},{% endfor %}]
+            }, {
+                name: 'No docstring',
+                data: [{% for entry in api %}{{ entry.no_docstring_testcases }},{% endfor %}]
+            }]
+        });
+
+        $('#cli-chart').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'CLI'
+            },
+            xAxis: {
+                categories: [{% for entry in cli %}'{{ entry.date }}',{% endfor %}]
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Testcases'
+                },
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                }
+            },
+            legend: {
+                align: 'right',
+                x: -70,
+                verticalAlign: 'top',
+                y: 20,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: false
+            },
+            tooltip: {
+                formatter: function() {
+                    return '<b>'+ this.x +'</b><br/>'+
+                        this.series.name +': '+ this.y +'<br/>'+
+                        'Total: '+ this.point.stackTotal;
+                }
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                        style: {
+                            textShadow: '0 0 3px black, 0 0 3px black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Automated',
+                data: [{% for entry in cli %}{{ entry.automated_testcases }},{% endfor %}]
+            }, {
+                name: 'Manual',
+                data: [{% for entry in cli %}{{ entry.manual_testcases }},{% endfor %}]
+            }, {
+                name: 'No docstring',
+                data: [{% for entry in cli %}{{ entry.no_docstring_testcases }},{% endfor %}]
+            }]
+        });
+
+        $('#ui-chart').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'UI'
+            },
+            xAxis: {
+                categories: [{% for entry in ui %}'{{ entry.date }}',{% endfor %}]
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Testcases'
+                },
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                }
+            },
+            legend: {
+                align: 'right',
+                x: -70,
+                verticalAlign: 'top',
+                y: 20,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: false
+            },
+            tooltip: {
+                formatter: function() {
+                    return '<b>'+ this.x +'</b><br/>'+
+                        this.series.name +': '+ this.y +'<br/>'+
+                        'Total: '+ this.point.stackTotal;
+                }
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                        style: {
+                            textShadow: '0 0 3px black, 0 0 3px black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Automated',
+                data: [{% for entry in ui %}{{ entry.automated_testcases }},{% endfor %}]
+            }, {
+                name: 'Manual',
+                data: [{% for entry in ui %}{{ entry.manual_testcases }},{% endfor %}]
+            }, {
+                name: 'No docstring',
+                data: [{% for entry in ui %}{{ entry.no_docstring_testcases }},{% endfor %}]
+            }]
+        });
+    });
+</script>
+{% endblock %}
