@@ -11,6 +11,10 @@ class IndexView(RedirectView):
     url = reverse_lazy('testimony_report')
 
 
+class MilestoneReportView(TemplateView):
+    template_name = 'reports/milestone.html'
+
+
 class TestimonyReportView(TemplateView):
     template_name = 'reports/testimony.html'
 

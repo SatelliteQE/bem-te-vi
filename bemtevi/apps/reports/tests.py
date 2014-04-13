@@ -5,6 +5,13 @@ from django.test import TestCase
 from bemtevi.apps.reports.models import TestimonyEntry
 
 
+class MilestoneReportTestCase(TestCase):
+    def test_have_route(self):
+        response = self.client.get(reverse('milestone_report'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('reports/milestone.html')
+
+
 class TestimonyReportTestCase(TestCase):
     def test_report_data(self):
         response = self.client.get(reverse('testimony_report'))

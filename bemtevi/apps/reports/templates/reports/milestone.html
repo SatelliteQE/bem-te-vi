@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Milestone Report</h1>
+
+{% verbatim %}
+<div data-ng-app="milestone">
+  <div data-ng-controller="github">
+    <h2><a href="{{ milestone.url }}">{{ milestone.title }}</a></h2>
+    <ul>
+      <li data-ng-repeat="assignee in assignees">
+        {{ assignee.login }}
+        <ul>
+          <li data-ng-repeat="issue in assignee.issues">
+            <a href="{{ issue.url }}">{{ issue.title }}</a> [{{ issue.state | uppercase }}]
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <div data-ng-show="unassignedIssues.length > 0">
+      <h3>Unassigned issues:</h3>
+      <ul>
+        <li data-ng-repeat="issue in unassignedIssues">
+          <a href="{{ issue.url }}">{{ issue.title }}</a> [{{ issue.state | uppercase }}]
+        </li>
+      </ul>
+    </div>
+
+    <div data-ng-show="milestone">
+      <h3>Summary:</h3>
+      <ul>
+        <li>Open: {{ milestone.open_issues }}</li>
+        <li>Closed: {{ milestone.closed_issues }}</li>
+        <li>Total: {{ milestone.open_issues + milestone.closed_issues }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="progress progress-striped active" id="loading">
+    <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>
+{% endverbatim %}
+{% endblock %}
+
+{% block extrajs %}
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular-resource.min.js"></script>
+<script>
+angular.module('milestone', ['ngResource'])
+.factory('Milestone', ['$resource', function ($resource) {
+  return $resource('https://api.github.com/repos/omaciel/robottelo/milestones/:number', {number: '@number'});
+}])
+.factory('Issue', ['$resource', function ($resource) {
+  return $resource('https://api.github.com/repos/omaciel/robottelo/issues/:number', {number: '@number'});
+}])
+.controller('github', ['$scope', 'Milestone', 'Issue', function ($scope, Milestone, Issue) {
+    Milestone.query().$promise.then(function (milestones) {
+      var milestone = milestones[milestones.length - 1];
+      Issue.query({milestone: milestone.number, state: 'all'}).$promise.then(function (issues) {
+        var assignees = new Array();
+        var unassignedIssues = new Array();
+        angular.forEach(issues, function (issue, index) {
+          if (issue.assignee !== null) {
+            if (!assignees[issue.assignee.login]) {
+              assignees[issue.assignee.login] = {
+                login: issue.assignee.login,
+                issues: new Array()
+              }
+            }
+
+            assignees[issue.assignee.login].issues.push(issue);
+          } else {
+            unassignedIssues.push(issue);
+          }
+        });
+
+        var assigneesList = new Array();
+        for (var assignee in assignees) {
+          assigneesList.push(assignees[assignee]);
+        }
+
+        angular.element('#loading').hide();
+
+        $scope.milestone = milestone;
+        $scope.assignees = assigneesList;
+        $scope.unassignedIssues = unassignedIssues;
+      });
+    });
+}]);
+</script>
+{% endblock %}
