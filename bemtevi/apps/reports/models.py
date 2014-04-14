@@ -1,8 +1,10 @@
+import datetime
+
 from django.db import models
 
 
 class TestimonyEntry(models.Model):
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(default=datetime.date.today)
     path = models.CharField(max_length=100)
     testcases = models.PositiveIntegerField()
     manual_testcases = models.PositiveIntegerField()
