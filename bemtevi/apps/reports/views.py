@@ -21,11 +21,11 @@ class TestimonyReportView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(TestimonyReportView, self).get_context_data(**kwargs)
         context['api'] = TestimonyEntry.objects.filter(
-            path__endswith='api')[:7]
+            path__endswith='api')[:7:-1]
         context['cli'] = TestimonyEntry.objects.filter(
-            path__endswith='cli')[:7]
+            path__endswith='cli')[:7:-1]
         context['ui'] = TestimonyEntry.objects.filter(
-            path__endswith='ui')[:7]
+            path__endswith='ui')[:7:-1]
         return context
 
 

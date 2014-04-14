@@ -12,4 +12,4 @@ class TestimonyEntry(models.Model):
     no_docstring_testcases = models.PositiveIntegerField()
 
     class Meta:
-        ordering = ['date']
+        ordering = ['-date']
