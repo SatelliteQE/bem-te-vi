@@ -58,7 +58,7 @@ angular.module('milestone', ['ngResource'])
 }])
 .controller('github', ['$scope', 'Milestone', 'Issue', function ($scope, Milestone, Issue) {
     Milestone.query().$promise.then(function (milestones) {
-      var milestone = milestones[milestones.length - 1];
+      var milestone = milestones[0];
       Issue.query({milestone: milestone.number, state: 'all'}).$promise.then(function (issues) {
         var assignees = new Array();
         var unassignedIssues = new Array();
