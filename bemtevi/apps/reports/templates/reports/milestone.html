@@ -7,38 +7,33 @@
 <div data-ng-app="milestone">
   <div data-ng-controller="github">
     <h2><a href="{{ milestone.url }}">{{ milestone.title }}</a></h2>
-    <ul>
-      <li data-ng-repeat="assignee in assignees">
-        {{ assignee.login }}
+    <div class="row">
+      <div class="col-md-6">
+        <p ng-hide="milestone">Loading...</p>
         <ul>
-          <li data-ng-repeat="issue in assignee.issues">
-            <a href="{{ issue.url }}">{{ issue.title }}</a> [{{ issue.state | uppercase }}]
-          </li>
-        </ul>
-      </li>
-    </ul>
-    <div data-ng-show="unassignedIssues.length > 0">
-      <h3>Unassigned issues:</h3>
-      <ul>
-        <li data-ng-repeat="issue in unassignedIssues">
-          <a href="{{ issue.url }}">{{ issue.title }}</a> [{{ issue.state | uppercase }}]
+        <li data-ng-repeat="assignee in assignees">
+            {{ assignee.login }}
+            <ul>
+            <li data-ng-repeat="issue in assignee.issues">
+                <a href="{{ issue.url }}">{{ issue.title }}</a> [{{ issue.state | uppercase }}]
+            </li>
+            </ul>
         </li>
-      </ul>
-    </div>
+        </ul>
+        <div data-ng-show="unassignedIssues.length > 0">
+        <h3>Unassigned issues:</h3>
+        <ul>
+            <li data-ng-repeat="issue in unassignedIssues">
+            <a href="{{ issue.url }}">{{ issue.title }}</a> [{{ issue.state | uppercase }}]
+            </li>
+        </ul>
+        </div>
+      </div>
 
-    <div data-ng-show="milestone">
-      <h3>Summary:</h3>
-      <ul>
-        <li>Open: {{ milestone.open_issues }}</li>
-        <li>Closed: {{ milestone.closed_issues }}</li>
-        <li>Total: {{ milestone.open_issues + milestone.closed_issues }}</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="progress progress-striped active" id="loading">
-    <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-      <span class="sr-only">Loading...</span>
+      <div class="col-md-6">
+          <h3>Summary</h3>
+          <div id="milestone-chart" class="well well-sm">Loading...</div>
+      </div>
     </div>
   </div>
 </div>
@@ -48,6 +43,7 @@
 {% block extrajs %}
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular-resource.min.js"></script>
+<script src="{{ STATIC_URL }}js/highcharts.js"></script>
 <script>
 angular.module('milestone', ['ngResource'])
 .factory('Milestone', ['$resource', function ($resource) {
@@ -81,6 +77,32 @@ angular.module('milestone', ['ngResource'])
         for (var assignee in assignees) {
           assigneesList.push(assignees[assignee]);
         }
+
+        $('#milestone-chart').highcharts({
+          title: {
+            text: ''
+          },
+          plotOptions: {
+            pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                enabled: true,
+                color: '#000000',
+                connectorColor: '#000000',
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+              }
+            }
+          },
+          series: [{
+            type: 'pie',
+            name: 'Issues',
+            data: [
+              ['Open', milestone.open_issues],
+              ['Closed', milestone.closed_issues],
+            ]
+            }]
+        });
 
         angular.element('#loading').hide();
 
