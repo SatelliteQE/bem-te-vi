@@ -6,16 +6,16 @@
 {% verbatim %}
 <div data-ng-app="milestone">
   <div data-ng-controller="github">
-    <h2><a href="{{ milestone.url }}">{{ milestone.title }}</a></h2>
+    <h2><a href="{{ milestone.html_url }}">{{ milestone.title }}</a></h2>
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-7">
         <p ng-hide="milestone">Loading...</p>
         <ul>
-        <li data-ng-repeat="assignee in assignees">
+        <li data-ng-repeat="assignee in assignees|orderBy:'login'">
             {{ assignee.login }}
             <ul>
             <li data-ng-repeat="issue in assignee.issues">
-                <a href="{{ issue.url }}">{{ issue.title }}</a> [{{ issue.state | uppercase }}]
+                <a href="{{ issue.html_url }}">{{ issue.title }}</a> [{{ issue.state | uppercase }}]
             </li>
             </ul>
         </li>
@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-md-5">
           <h3>Summary</h3>
           <div id="milestone-chart" class="well well-sm">Loading...</div>
       </div>
@@ -55,6 +55,7 @@ angular.module('milestone', ['ngResource'])
 .controller('github', ['$scope', 'Milestone', 'Issue', function ($scope, Milestone, Issue) {
     Milestone.query().$promise.then(function (milestones) {
       var milestone = milestones[0];
+      milestone.html_url = 'https://github.com/omaciel/robottelo/issues?milestone=' + milestone.number;
       Issue.query({milestone: milestone.number, state: 'all'}).$promise.then(function (issues) {
         var assignees = new Array();
         var unassignedIssues = new Array();
@@ -90,7 +91,7 @@ angular.module('milestone', ['ngResource'])
                 enabled: true,
                 color: '#000000',
                 connectorColor: '#000000',
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                format: '<b>{point.name}</b>: {point.y} ({point.percentage:.1f}%)'
               }
             }
           },
