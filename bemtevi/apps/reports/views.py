@@ -18,12 +18,17 @@ class MilestoneReportView(TemplateView):
 class TestimonyReportView(TemplateView):
     template_name = 'reports/testimony.html'
 
+    def get(self, request, *args, **kwargs):
+        self.entries = int(request.GET.get('entries', '7'))
+        return super(
+            TestimonyReportView, self).get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(TestimonyReportView, self).get_context_data(**kwargs)
         context['api'] = TestimonyEntry.objects.filter(
-            path__endswith='api')[:7:-1]
+            path__endswith='api')[:self.entries:-1]
         context['cli'] = TestimonyEntry.objects.filter(
-            path__endswith='cli')[:7:-1]
+            path__endswith='cli')[:self.entries:-1]
         context['ui'] = TestimonyEntry.objects.filter(
-            path__endswith='ui')[:7:-1]
+            path__endswith='ui')[:self.entries:-1]
         return context

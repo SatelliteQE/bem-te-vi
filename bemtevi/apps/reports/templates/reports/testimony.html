@@ -5,6 +5,13 @@
   <h1>Testimony report</h1>
 </div>
 
+<div class="well well-sm">
+  Report for last:
+  <a href="{% url 'testimony_report' %}?entries=7">7 entries</a>,
+  <a href="{% url 'testimony_report' %}?entries=30">30 entries</a>,
+  <a href="{% url 'testimony_report' %}?entries=60">60 entries</a>,
+  <a href="{% url 'testimony_report' %}?entries=90">90 entries</a>.
+</div>
 <div id="api-chart" class="well well-sm">Loading...</div>
 <div id="cli-chart" class="well well-sm">Loading...</div>
 <div id="ui-chart" class="well well-sm">Loading...</div>
@@ -15,11 +22,14 @@
 <script>
     $(function () {
         $('#api-chart').highcharts({
+            chart: {
+                zoomType: 'x'
+            },
             title: {
                 text: 'API'
             },
             xAxis: {
-                categories: [{% for entry in api %}'{{ entry.date }}',{% endfor %}]
+                type: 'datetime'
             },
             yAxis: {
                 min: 0,
@@ -36,25 +46,28 @@
             },
             series: [{
                 name: 'Total',
-                data: [{% for entry in api %}{{ entry.testcases }},{% endfor %}]
+                data: [{% for entry in api %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.testcases }}],{% endfor %}]
             }, {
                 name: 'Automated',
-                data: [{% for entry in api %}{{ entry.automated_testcases }},{% endfor %}]
+                data: [{% for entry in api %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.automated_testcases }}],{% endfor %}]
             }, {
                 name: 'Manual',
-                data: [{% for entry in api %}{{ entry.manual_testcases }},{% endfor %}]
+                data: [{% for entry in api %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.manual_testcases }}],{% endfor %}]
             }, {
                 name: 'No docstring',
-                data: [{% for entry in api %}{{ entry.no_docstring_testcases }},{% endfor %}]
+                data: [{% for entry in api %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.no_docstring_testcases }}],{% endfor %}]
             }]
         });
 
         $('#cli-chart').highcharts({
+            chart: {
+                zoomType: 'x'
+            },
             title: {
                 text: 'CLI'
             },
             xAxis: {
-                categories: [{% for entry in cli %}'{{ entry.date }}',{% endfor %}]
+                type: 'datetime'
             },
             yAxis: {
                 min: 0,
@@ -71,25 +84,28 @@
             },
             series: [{
                 name: 'Total',
-                data: [{% for entry in cli %}{{ entry.testcases }},{% endfor %}]
+                data: [{% for entry in cli %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.testcases }}],{% endfor %}]
             }, {
                 name: 'Automated',
-                data: [{% for entry in cli %}{{ entry.automated_testcases }},{% endfor %}]
+                data: [{% for entry in cli %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.automated_testcases }}],{% endfor %}]
             }, {
                 name: 'Manual',
-                data: [{% for entry in cli %}{{ entry.manual_testcases }},{% endfor %}]
+                data: [{% for entry in cli %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.manual_testcases }}],{% endfor %}]
             }, {
                 name: 'No docstring',
-                data: [{% for entry in cli %}{{ entry.no_docstring_testcases }},{% endfor %}]
+                data: [{% for entry in cli %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.no_docstring_testcases }}],{% endfor %}]
             }]
         });
 
         $('#ui-chart').highcharts({
+            chart: {
+                zoomType: 'x'
+            },
             title: {
                 text: 'UI'
             },
             xAxis: {
-                categories: [{% for entry in ui %}'{{ entry.date }}',{% endfor %}]
+                type: 'datetime'
             },
             yAxis: {
                 min: 0,
@@ -106,16 +122,16 @@
             },
             series: [{
                 name: 'Total',
-                data: [{% for entry in ui %}{{ entry.testcases }},{% endfor %}]
+                data: [{% for entry in ui %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.testcases }}],{% endfor %}]
             }, {
                 name: 'Automated',
-                data: [{% for entry in ui %}{{ entry.automated_testcases }},{% endfor %}]
+                data: [{% for entry in ui %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.automated_testcases }}],{% endfor %}]
             }, {
                 name: 'Manual',
-                data: [{% for entry in ui %}{{ entry.manual_testcases }},{% endfor %}]
+                data: [{% for entry in ui %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.manual_testcases }}],{% endfor %}]
             }, {
                 name: 'No docstring',
-                data: [{% for entry in ui %}{{ entry.no_docstring_testcases }},{% endfor %}]
+                data: [{% for entry in ui %}[Date.UTC({{ entry.date|date:"Y, n-1, d" }}), {{ entry.no_docstring_testcases }}],{% endfor %}]
             }]
         });
     });
